@@ -1,0 +1,16 @@
+name: "Obico-HA"
+description: "Addon for Home Assistant to run an Obico ML server for detection spaghetti"
+version: "1.0.0"
+slug: "obico_ha"
+init: false
+arch:
+  - amd64
+startup: services
+ports:
+  3333/tcp: 3333
+options:
+  obico_api_secret: "obico_api_secret"
+schema:
+  obico_api_secret: str
+url: "https://github.com/theminor/Obico-HA"
+homeassistant_api: true
