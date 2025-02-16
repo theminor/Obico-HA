@@ -5,7 +5,8 @@ Based on [ha-bambu-lab-p1-spaghetti-detection](https://github.com/nberktumer/ha-
 
 ## API Endpoints
 ### `/p/`
-- Example request: `GET http://localhost:3333/p/?img=https://www.example.com/image.jpg`
+- Example request: `GET http://localhost:3333/p/?img=https://www.example.com/image.jpg&threshold=0.08`
+- `threshold` is optional - defaults to `0.08`
 - Example response:
 	```json
 	{
@@ -116,9 +117,10 @@ Based on [ha-bambu-lab-p1-spaghetti-detection](https://github.com/nberktumer/ha-
 
 ## `/check/`
 - Similar to `/p/` except it takes a Home Assistant camera entity name rather than a URL of the image
-- Example request: `GET http://localhost:3333/check/?entity_id=camera.example_camera`
-- Headers: {}
-- Rxample response: 
+- Example request: `GET http://localhost:3333/check/?entity_id=camera.example_camera&threshold=0.08`
+- `threshold` is optional - defaults to `0.08`
+- Headers: `{"Authorization": "Bearer obico_api_secret"}`
+- Example response: 
 	```json
 	{
 		"detections": [
