@@ -9,8 +9,9 @@ import requests
 from auth import token_required
 from lib.detection_model import load_net, detect
 
-app = Flask(__name__)
+DEFAULT_THRESHOLD = 0.08
 
+app = Flask(__name__)
 status = dict()
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -38,7 +39,7 @@ def get_p():
 	if 'img' in request.args:
 		try:
 			resp = requests.get(request.args['img'], stream=True, timeout=(0.1, 5))
-			threshold = float(request.args.get('threshold', 0.08)) # Get the threshold from the request params, default to 0.08
+			threshold = float(request.args.get('threshold', DEFAULT_THRESHOLD)) # Get the threshold from the request params, default to 0.08
 			resp.raise_for_status()
 			img_array = np.array(bytearray(resp.content), dtype=np.uint8)
 			img = cv2.imdecode(img_array, -1)
@@ -87,7 +88,7 @@ def failure_detect():
 		img_array = np.frombuffer(img_bytes, dtype=np.uint8)
 		img = cv2.imdecode(img_array, -1)
 
-		threshold = float(data.get("threshold", 0.08)) # Get the threshold from the request data, default to 0.08
+		threshold = float(data.get("threshold", DEFAULT_THRESHOLD)) # Get the threshold from the request data, default to 0.08
 
 		detections = detect(net_main, img, thresh=threshold)
 
@@ -124,7 +125,7 @@ def check_entity():
 	if 'entity_id' in request.args:
 		try:
 			entity_id = request.args['entity_id']
-			threshold = float(request.args.get('threshold', 0.08)) # Get the threshold from the request params, default to 0.08
+			threshold = float(request.args.get('threshold', DEFAULT_THRESHOLD)) # Get the threshold from the request params, default to 0.08
 			hass_url = 'http://supervisor/core/api'
 			hass_token = environ.get('SUPERVISOR_TOKEN')
 			headers = {
