@@ -87,7 +87,7 @@ def failure_detect():
 		img_array = np.frombuffer(img_bytes, dtype=np.uint8)
 		img = cv2.imdecode(img_array, -1)
 
-		threshold = float(data.get("threshold", DEFAULT_THRESHOLD))
+		threshold = float(data.get("threshold", 0.08)) # Get the threshold from the request data, default to 0.08
 
 		detections = detect(net_main, img, thresh=threshold)
 
