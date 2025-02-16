@@ -60,7 +60,7 @@ def get_p():
 def health_check():
 	return 'ok' if net_main is not None else 'error'
 
-# /detect/ endpoint - added from Obico ML HA Addon (with fixes)
+# /detect/ endpoint - adinspired by Obico ML HA Addon (with fixes)
 # example request data:
 # {
 #     "img": "base64_encoded_image_as_string",
@@ -78,7 +78,7 @@ def health_check():
 #     "image_with_detections": "base64_encoded_image_as_string"
 # }
 @app.route('/detect/', methods=['POST'])
-# @token_required # might add for final version after testing...
+@token_required
 def failure_detect():
 	try:
 		data = request.get_json(force=True)  # <-- Force JSON parsing
