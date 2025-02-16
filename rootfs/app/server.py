@@ -9,9 +9,6 @@ import requests
 from auth import token_required
 from lib.detection_model import load_net, detect
 
-THRESH = 0.08  # The threshold for a box to be considered a positive detection ## TO-DO: allow user input/setting for this
-SESSION_TTL_SECONDS = 60 * 2
-
 app = Flask(__name__)
 
 status = dict()
@@ -41,10 +38,11 @@ def get_p():
 	if 'img' in request.args:
 		try:
 			resp = requests.get(request.args['img'], stream=True, timeout=(0.1, 5))
+			threshold = float(request.args.get('threshold', 0.08)) # Get the threshold from the request params, default to 0.08
 			resp.raise_for_status()
 			img_array = np.array(bytearray(resp.content), dtype=np.uint8)
 			img = cv2.imdecode(img_array, -1)
-			detections = detect(net_main, img, thresh=THRESH)
+			detections = detect(net_main, img, thresh=threshold)
 			return jsonify({'detections': detections})
 		except:
 			print(traceback.print_exc())
@@ -89,7 +87,7 @@ def failure_detect():
 		img_array = np.frombuffer(img_bytes, dtype=np.uint8)
 		img = cv2.imdecode(img_array, -1)
 
-		threshold = float(data.get("threshold", THRESH))
+		threshold = float(data.get("threshold", DEFAULT_THRESHOLD))
 
 		detections = detect(net_main, img, thresh=threshold)
 
@@ -126,7 +124,7 @@ def check_entity():
 	if 'entity_id' in request.args:
 		try:
 			entity_id = request.args['entity_id']
-			#hass_url = environ.get('http://supervisor/core/api/config')
+			threshold = float(request.args.get('threshold', 0.08)) # Get the threshold from the request params, default to 0.08
 			hass_url = 'http://supervisor/core/api'
 			hass_token = environ.get('SUPERVISOR_TOKEN')
 			headers = {
@@ -141,7 +139,7 @@ def check_entity():
 			img_array = np.array(bytearray(resp.content), dtype=np.uint8) # Convert the image to a numpy array
 			img = cv2.imdecode(img_array, -1) # Decode the image
 
-			detections = detect(net_main, img, thresh=THRESH) 
+			detections = detect(net_main, img, thresh=threshold) 
 			return jsonify({'detections': detections})
 		except Exception as e:
 			app.logger.error(f"Error processing entity image: {str(e)}")
