@@ -8,8 +8,6 @@ import numpy as np
 import requests
 from auth import token_required
 from lib.detection_model import load_net, detect
-from homeassistant.helpers.device_registry import DeviceRegistry
-
 
 THRESH = 0.08  # The threshold for a box to be considered a positive detection ## TO-DO: allow user input/setting for this
 SESSION_TTL_SECONDS = 60 * 2
@@ -128,7 +126,8 @@ def check_entity():
 	if 'entity_id' in request.args:
 		try:
 			entity_id = request.args['entity_id']
-			hass_url = environ.get('http://supervisor/core/api/config')
+			#hass_url = environ.get('http://supervisor/core/api/config')
+			hass_url = 'http://supervisor/core/api'
 			hass_token = environ.get('SUPERVISOR_TOKEN')
 			headers = {
 				"Authorization": f"Bearer {hass_token}",
@@ -136,7 +135,7 @@ def check_entity():
 			}
 
 			# Get the camera image from Home Assistant
-			camera_image_url = f"{hass_url}/api/camera_proxy/{entity_id}"
+			camera_image_url = f"{hass_url}/camera_proxy/{entity_id}"
 			resp = requests.get(camera_image_url, headers=headers, stream=True, timeout=(0.1, 5))
 			resp.raise_for_status()  # Raise an exception if the status code is not 200
 			img_array = np.array(bytearray(resp.content), dtype=np.uint8) # Convert the image to a numpy array
